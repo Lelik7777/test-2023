@@ -1,0 +1,47 @@
+.parent {
+  width: 500px;
+  height: 500px;
+  background: red;
+}
+
+.child {
+  width: 50%;
+  height: 50%;
+  background: blue;
+  /* transition: transform 1.5s,background-color 2s; */
+  /* ! первым идет название свойств,к которым применяется анимация, далее время анимации, после timing function( вид анимации(ее протекание)),последним указывается задержка анимации */
+  transition: all 1s ease-in-out 2s;
+}
+
+/*?hover on child*/
+/* .child:hover {
+  transform: translateX(50%);
+} */
+/* ? здесь же я навожу на родителя, а анимация происходит ребенка */
+.parent:hover .child {
+  /* transform: translateX(100%); */
+  background: #2ac231;
+  /*! вначале указывается имя анимации,потом продолжительность, далее timing function,далее задержка, потом animation-fill-mode,после можно задать количестов поторений,через alternate можно задать обратное движение*/
+  animation: top-to-bottom 1s ease-out forwards 3 alternate;
+}
+
+@keyframes top-to-bottom {
+  0% {
+    transform: translateX(0);
+  }
+
+  33% {
+    transform: translateY(100%);
+  }
+
+  66% {
+    transform: translateY(100%) translateX(100%);
+
+  }
+
+  100% {
+    transform: translateX(100%);
+
+  }
+
+}
