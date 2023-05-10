@@ -229,3 +229,103 @@ function groupById(users) {
   }, {});
 }
 console.log(groupById(users11));
+
+//iterable object first variant
+const range = {
+  from: 1,
+  to: 5,
+  [Symbol.iterator]() {
+    this.current = this.from;
+    return this;
+  },
+  next() {
+    if (this.current <= this.to) {
+      return {
+        done: false,
+        value: this.current++,
+      };
+    } else {
+      return { done: true };
+    }
+  },
+};
+
+for (let value of range) {
+  console.log(value);
+}
+// iterable object second variant
+const range2 = {
+  from: 1,
+  to: 6,
+};
+range2[Symbol.iterator] = function () {
+  return {
+    current: this.from,
+    last: this.to,
+    next() {
+      return this.current <= this.last
+        ? { done: false, value: this.current++ }
+        : { done: true };
+    },
+  };
+};
+for (let elem of range2) {
+  console.log(elem);
+}
+//Array.from()
+console.log(Array.from(range2, (value) => value * 2));
+const someArray = [1, 3, 4, 5, 6];
+const doubleArray = Array.from(someArray, (num) => num * 2);
+console.log(someArray);
+console.log(doubleArray);
+
+//Map
+const map = new Map();
+map.set("str", "hello");
+map.set(1, 1);
+map.set({ name: "bob" }, "bob");
+
+console.log(map.size);
+
+let recipeMap = new Map([
+  ["огурец", 500],
+  ["помидор", 350],
+  ["лук", 50],
+]);
+
+for (let item of recipeMap.entries()) {
+  console.log(item);
+}
+recipeMap.forEach((item, key) => {
+  console.log(item, key);
+});
+
+//Фильтрация уникальных элементов массивa
+//Допустим, у нас есть массив arr.
+//Создайте функцию unique(arr), которая вернёт массив уникальных, не повторяющихся значений массива arr.
+let values = [
+  "Hare",
+  "Krishna",
+  "Hare",
+  "Krishna",
+  "Krishna",
+  "Krishna",
+  "Hare",
+  "Hare",
+  ":-O",
+];
+const unique2 = (values) => [...new Set(values)];
+console.log(unique2(values));
+
+//Отфильтруйте анаграммы
+//Анаграммы – это слова, у которых те же буквы в том же количестве, но они располагаются в другом порядке.
+let arrNew2 = ["nap", "teachers", "cheaters", "PAN", "ear", "era", "hectares"];
+function aclean(arr) {
+  const map = new Map();
+  for (const item of arr) {
+    let sortWord = [...item.toLowerCase()].sort().join("");
+    map.set(sortWord,item);
+  }
+  return Array.from(map.values());
+}
+console.log(aclean(arrNew2));
