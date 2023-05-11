@@ -323,9 +323,188 @@ let arrNew2 = ["nap", "teachers", "cheaters", "PAN", "ear", "era", "hectares"];
 function aclean(arr) {
   const map = new Map();
   for (const item of arr) {
-    let sortWord = [...item.toLowerCase()].sort().join("");
-    map.set(sortWord,item);
+    const sortedItem = [...item.toLowerCase()].sort().join("");
+    map.set(sortedItem, item);
   }
+  console.log(map.values());
   return Array.from(map.values());
 }
 console.log(aclean(arrNew2));
+
+//Перебираемые ключи
+//Мы хотели бы получить массив ключей map.keys() в переменную и далее работать с ними, например, применить метод .push.
+let map11 = new Map();
+
+map11.set("name", "John");
+
+let keys = Array.from(map11.keys());
+keys.push("more");
+console.log(keys);
+
+//WeakMap
+let john = { name: "John" };
+const arrayNames = [john];
+john = null;
+console.log(john);
+console.log(arrayNames.at(0));
+
+const weakMap = new WeakMap();
+let bob = { name: "bob" };
+let emptyObj = {};
+weakMap.set(emptyObj, "some value");
+console.log(weakMap.has(emptyObj));
+//! if delete emptyObj then it automatically is removed from weakMap
+//emptyObj=null;
+console.log(weakMap.has(emptyObj));
+console.log(weakMap.get(bob));
+
+//Хранение отметок "не прочитано"
+//Есть массив сообщений:
+let messages = [
+  { text: "Hello", from: "John" },
+  { text: "How goes?", from: "John" },
+  { text: "See you soon", from: "Alice" },
+];
+//У вас есть к ним доступ, но управление этим массивом происходит где-то ещё. Добавляются новые сообщения и удаляются старые, и вы не знаете в какой момент это может произойти.
+//Имея такую вводную информацию, решите, какую структуру данных вы могли бы использовать для ответа на вопрос «было ли сообщение прочитано?». Структура должна быть подходящей, чтобы можно было однозначно сказать, было ли прочитано это сообщение для каждого объекта сообщения.
+
+//since weakSet store only unique data, the message can only get into it once
+//so all messages in weakSet are read
+const readMessages = new WeakSet(messages);
+readMessages.add(messages[0]);
+console.log(readMessages);
+console.log(readMessages.has(messages[2]));
+//messages.pop();
+console.log(readMessages.has(messages[2]));
+//this property automatically appears in weakSet
+let isRead = Symbol("isRead");
+messages[0][isRead] = true;
+console.log(messages);
+
+//есть тот же массив объектов сообщений. Теперь вопрос стоит так: какую структуру данных вы бы предложили использовать для хранения информации о том, когда сообщение было прочитано?
+const readMessagesMap = new WeakMap();
+messages.forEach((message) => readMessagesMap.set(message, new Date()));
+console.log(readMessagesMap);
+
+console.log([3, 4, 5, 6].entries());
+
+//Object.keys(),.values(),entries()
+let user = {
+  name: "John",
+  age: 30,
+};
+console.log(Object.entries(user));
+//Например, у нас есть объект с ценами, и мы хотели бы их удвоить:
+let prices = {
+  banana: 1,
+  orange: 2,
+  meat: 4,
+};
+function doDoubleProperties(obj) {
+  return Object.fromEntries(
+    Object.entries(prices).map(([key, value]) => [key, value * 2])
+  );
+}
+console.log(doDoubleProperties(prices));
+console.log(prices);
+
+//Сумма свойств объекта
+//Есть объект salaries с произвольным количеством свойств, содержащих заработные платы.
+//Напишите функцию sumSalaries(salaries), которая возвращает сумму всех зарплат с помощью метода Object.values и цикла for..of.
+//Если объект salaries пуст, то результат должен быть 0.
+let salaries = {
+  John: 100,
+  Pete: 300,
+  Mary: 250,
+};
+function sumSalaries(salaries) {
+  return Object.values(salaries).reduce((acc, val) => acc + val, 0);
+}
+console.log(sumSalaries(salaries));
+//Подсчёт количества свойств объекта
+//Напишите функцию count(obj), которая возвращает количество свойств объекта:
+const count = (obj) => Object.values(obj).length;
+console.log(count(salaries));
+
+//cache
+const cache = new Map();
+function makeHardActions(obj) {
+  let start = Date.now();
+  console.log("start", start);
+  if (!cache.has(obj)) {
+    let hardAction = [];
+    for (let i = 0; i < 100000000; i++) {
+      hardAction = i;
+    }
+    cache.set(obj, hardAction);
+  }
+  var currentTime = Date.now();
+
+  console.log("current time", currentTime);
+  console.log("time", currentTime - start);
+  return cache.get(obj);
+}
+const someObj = { some: "object" };
+console.log(makeHardActions(someObj));
+console.log(makeHardActions(someObj));
+
+//destructuring assignment
+const userNew = {};
+[userNew.name, userNew.email, userNew.age] = ["bob", "forest@mail.com", 34];
+console.log(userNew);
+let options = {
+  title: "Menu",
+  width: undefined,
+};
+//переименовал свойство и присвоил ему значение по умолчанию,если его нет в объекте. Новые свойства,типа width and height вообще не имеют никакого отношения к текущему объекту options
+const { title: t = "hello", width2 } = options;
+console.log(options); //{title: 'Menu', width: undefined}
+let options2 = {
+  size: {
+    width: 100,
+    height: 200,
+  },
+  items: ["Cake", "Donut"],
+  extra: true,
+};
+//как только я захожу внутрь свойства size, то size уже не переменная
+const {
+  size: { width, height },
+  items,
+} = options2;
+//а здесь у меня уже есть переменная size
+const { size } = options2; //{width: 100,height: 200}
+console.log(width, height, items); //100 200 (2) ['Cake', 'Donut']
+
+//У нас есть объект:
+
+let user00 = {
+  name: "John",
+  years: 30,
+};
+//Напишите деструктурирующее присваивание, которое:
+//свойство name присвоит в переменную name.
+//свойство years присвоит в переменную age.
+//свойство isAdmin присвоит в переменную isAdmin (false, если нет такого свойства)
+const { name, years: age, isAdmin = false } = user00;
+console.log(name, age, isAdmin);
+
+//У нас есть объект salaries с зарплатами:
+
+let salaries00 = {
+  John: 100,
+  Pete: 300,
+  Mary: 250,
+};
+// Создайте функцию topSalary(salaries), которая возвращает имя самого высокооплачиваемого сотрудника.
+// Если объект salaries пустой, то нужно вернуть null.
+// Если несколько высокооплачиваемых сотрудников, можно вернуть любого из них.
+function topSalary(salaries) {
+  const maxSalary = Math.max(...Object.values(salaries));
+  for (const [key, value] of Object.entries(salaries00)) {
+    if (value === maxSalary) {
+      return key;
+    }
+  }
+}
+console.log(topSalary(salaries00));
