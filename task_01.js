@@ -1,3 +1,4 @@
+
 //1.Создайте функцию truncate(str, maxlength), которая проверяет длину строки str и, если она превосходит maxlength, заменяет конец str на "…", так, чтобы её длина стала равна maxlength.
 function truncate(str, maxLength) {
   return str.length > maxLength ? str.slice(0, maxLength - 1) + "..." : str;
@@ -508,3 +509,279 @@ function topSalary(salaries) {
   }
 }
 console.log(topSalary(salaries00));
+
+//DATE
+console.log(new Date("2022-01-25"));
+console.log(new Date(2011, 0, 1));
+console.log(new Date().getTime());
+console.log(new Date().getTimezoneOffset());
+const date = String(new Date());
+console.log(date);
+console.log(Date.parse(date));
+let options000 = {
+  title: "My menu",
+  items: ["Item1", "Item2"],
+};
+function showMenu00({
+  title = "some name",
+  items = [],
+  width = 100,
+  height = 200,
+}) {
+  console.log(`${title} ${items} ${width} ${height}`);
+}
+showMenu00(options000);
+//Создайте объект Date для даты: 20 февраля 2012 года, 3 часа 12 минут. Временная зона – местная.
+console.log(new Date(2012, 1, 20, 3, 12));
+
+//Напишите функцию getWeekDay(date), показывающую день недели в коротком формате: «ПН», «ВТ», «СР», «ЧТ», «ПТ», «СБ», «ВС».
+let date0 = new Date(2012, 0, 3); // 3 января 2012 года
+console.log(typeof date0);
+function getWeekDay(date) {
+  const weekDays = ["ВС", "ПН", "ВТ", "СР", "ЧТ", "ПТ", "СБ"];
+
+  return weekDays[date.getDay()];
+}
+console.log(getWeekDay(date0));
+//В Европейских странах неделя начинается с понедельника (день номер 1), затем идёт вторник (номер 2) и так до воскресенья (номер 7). Напишите функцию getLocalDay(date), которая возвращает «европейский» день недели для даты date.
+function getLocalDay(date) {
+  return date.getDay() === 0 ? 7 : date.getDay();
+}
+console.log(getLocalDay(date0));
+let today = new Date();
+
+today.setMonth(0);
+today.setFullYear(2020);
+console.log(today); // выводится сегодняшняя дата, но значение часа будет 0
+
+today.setHours(0, 0, 0, 0);
+// Создайте функцию getDateAgo(date, days), возвращающую число, которое было days дней назад от даты date.
+// К примеру, если сегодня двадцатое число, то getDateAgo(new Date(), 1) вернёт девятнадцатое и getDateAgo(new Date(), 2) – восемнадцатое.
+// Функция должна надёжно работать при значении days=365 и больших значениях:
+//P.S. Функция не должна изменять переданный ей объект date.
+let date00 = new Date(2015, 0, 2);
+
+function getDateAgo({ date, days }) {
+  //make copy so not mutate input date
+  const dateCopy = new Date(date);
+  //установил результат вычислений: текущий день минус количество дней из параметра ф-ции
+
+  console.log(dateCopy);
+  dateCopy.setDate(date.getDate() - days);
+  //вернул день текущего месяца
+  return dateCopy.getDate();
+}
+console.log(getDateAgo({ date: date00, days: 2 }));
+console.log(date00);
+
+// Напишите функцию getLastDayOfMonth(year, month), возвращающую последнее число месяца. Иногда это 30, 31 или даже февральские 28/29.
+// Параметры:
+// year – год из четырёх цифр, например, 2012.
+// month – месяц от 0 до 11.
+// К примеру, getLastDayOfMonth(2012, 1) = 29 (високосный год, февраль).
+function getLastDayOfMonth({ year, month }) {
+  //передавая третьим параметром ноль - это означает,что передаю нулевой день,а это предыдущий день текущего месяца и объект дата сам вычислит результат
+  const date = new Date(year, month + 1, 0);
+  //date.setDate(date.getDate() - 1);
+  return date.getDate();
+}
+console.log(getLastDayOfMonth({ year: 2013, month: 1 }));
+
+// Напишите функцию getSecondsToday(), возвращающую количество секунд с начала сегодняшнего дня.
+// Например, если сейчас 10:00, и не было перехода на зимнее/летнее время, то:
+function getSecondsToday() {
+  const date = new Date();
+  return date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds();
+}
+getSecondsToday();
+
+// Создайте функцию getSecondsToTomorrow(), возвращающую количество секунд до завтрашней даты.
+function getSecondsToTomorrow() {
+  //first variant of solution
+  // const date = new Date();
+  // const daySeconds = 24 * 3600;
+  // const currentSeconds =
+  //   date.getHours() * 3600 + date.getMinutes() * 60 + date.getSeconds();
+  // return daySeconds - currentSeconds;
+  //second variant of solution
+  const now = new Date();
+  console.log(now);
+  const tomorrow = new Date(
+    now.getFullYear(),
+    now.getMonth(),
+    now.getDate() + 1
+  );
+  console.log(tomorrow);
+  return Math.round((tomorrow - now) / 1000);
+}
+console.log(getSecondsToTomorrow());
+//get current date from beginning
+const date000 = new Date();
+const now = new Date(
+  date000.getFullYear(),
+  date000.getMonth(),
+  date000.getDate()
+);
+console.log(now); //Fri May 12 2023 00:00:00 GMT+0300 (Moscow Standard Time)
+
+// Напишите функцию formatDate(date), форматирующую date по следующему принципу:
+// Если спустя date прошло менее 1 секунды, вывести "прямо сейчас".
+// В противном случае, если с date прошло меньше 1 минуты, вывести "n сек. назад".
+// В противном случае, если меньше часа, вывести "m мин. назад".
+// В противном случае, полная дата в формате "DD.MM.YY HH:mm". А именно: "день.месяц.год часы:минуты", всё в виде двух цифр, т.е. 31.12.16 10:00.
+function formatDate(date) {
+  //in ms
+  const difference = new Date() - date;
+
+  if (difference <= 1000) {
+    return "right now";
+  }
+  const sec = Math.floor(difference / 1000);
+
+  if (sec < 60) {
+    return `${sec} seconds ago`;
+  }
+  const minutes = sec / 60;
+  if (minutes < 60) {
+    return `${minutes} minutes ago`;
+  }
+  //формат "DD.MM.YY HH:mm"
+  let modifyDate = [
+    "0" + date.getDate(),
+    "0" + (date.getMonth() + 1),
+    "" + date.getFullYear(),
+    "0" + date.getHours(),
+    "0" + date.getMinutes(),
+  ].map((elem) => (elem.length >= 4 ? elem : elem.slice(-2)));
+
+  return (
+    modifyDate.slice(0, 3).join(".") + " " + modifyDate.slice(-2).join(":")
+  );
+}
+console.log(formatDate(new Date(new Date() - 1)));
+console.log(formatDate(new Date(new Date() - 30 * 1000)));
+console.log(formatDate(new Date(new Date() - 5 * 60 * 1000))); // "5 мин. назад"
+console.log(formatDate(new Date(new Date() - 86400 * 1000)));
+
+//! JSON
+
+//ручной вариант преобразования объекта в примитив( строку)
+const user000 = {
+  name: "bob",
+  age: 34,
+  toString() {
+    return `name:${this.name},
+    age: ${this.age}`;
+  },
+};
+//alert(user000);
+const id = Symbol("id");
+let student = {
+  name: "John",
+  age: 30,
+  isAdmin: false,
+  courses: ["html", "css", "js"],
+  wife: null,
+  //методы JSON не видит methods,undefined,Symbols
+  sum(a, b) {
+    return a + b;
+  },
+  value: undefined,
+  [id]: "some value",
+};
+const stringStudent = JSON.stringify(student);
+console.log(stringStudent);
+console.log(JSON.stringify("hello world"));
+//получается,что ф-цию преобразовать в JSON нельзя
+function sum(a, b) {
+  return a + b;
+}
+console.log(JSON.stringify(sum));
+console.log(JSON.stringify(43345345));
+console.log(JSON.stringify(null));
+const value = null;
+console.log(JSON.stringify(value));
+console.log(JSON.stringify([4, 5, 6, 7]));
+//мы можем настраивать свойства,которые хотим сериализировать
+let room = {
+  number: 23,
+  windows: {
+    one: 1,
+    two: 2,
+  },
+  //благодаря этому методу мы можем настроить ссылочный объект так, чтобы в JSON попадали только нужные нам данные. В данном случае, попадет только свойство windows,а number нет.
+  toJSON() {
+    return this.windows;
+  },
+};
+let meetup = {
+  title: "Conference",
+  participants: [{ name: "John" }, { name: "Alice" }],
+  date: new Date(Date.UTC(2017, 0, 1)),
+  place: room, // meetup ссылается на room
+};
+//массив в качестве replacer для нужных свойств
+//console.log(JSON.stringify(meetup,['title','participants','place','number']));
+//циклическая ссылка,которая ломает процесс форматирования
+room.occupiedBy = meetup; // room ссылается на meetup
+// функция в качестве replacer,в которой указываю свойства,которые не нужны в JSON
+console.log(
+  JSON.stringify(
+    meetup,
+    function (key, value) {
+      return key == "occupiedBy" || key === "title" ? undefined : value;
+    },
+    1
+  )
+); //{"participants":[{"name":"John"},{"name":"Alice"}],"place":{"number":23}}
+
+// так выглядит JSON формат после применения JSON.stringify()
+let str = '{"title":"Conference","date":"2017-11-30T12:00:00.000Z"}';
+const meetupToString = JSON.stringify(meetup, null, 1);
+console.log("JSON", meetupToString);
+const res2 = JSON.parse(meetupToString, function (key, value) {
+  return key === "date" ? new Date(value) : value;
+});
+console.log(res2.date.getMonth());
+let res = JSON.parse(str, (key, value) =>
+  key === "date" ? new Date(value) : value
+);
+//! months start with 0
+console.log(res.date.getDay() + 1);
+
+//Преобразуйте user в JSON, затем прочитайте этот JSON в другую переменную.
+let user7 = {
+  name: "Василий Иванович",
+  age: 35,
+};
+const user7Json = JSON.stringify(user7);
+console.log(user7Json);
+const parsedUser7 = JSON.parse(user7Json);
+//по сути мы скопировали объект
+console.log(parsedUser7 === user7Json);
+
+// В простых случаях циклических ссылок мы можем исключить свойство, из-за которого они возникают, из сериализации по его имени.
+// Но иногда мы не можем использовать имя, так как могут быть и другие, нужные, свойства с этим именем во вложенных объектах. Поэтому можно проверять свойство по значению.
+// Напишите функцию replacer для JSON-преобразования, которая удалит свойства, ссылающиеся на meetup:
+let room0 = {
+  number: 23,
+};
+
+let meetup0 = {
+  title: "Совещание",
+  occupiedBy: [{ name: "Иванов" }, { name: "Петров" }],
+  place: room0,
+};
+
+// цикличные ссылки
+room0.occupiedBy = meetup0;
+meetup0.self = meetup0;
+
+console.log(room0);
+console.log(meetup0);
+const meetup0Json = JSON.stringify(
+  meetup0,
+  (key, value) => (key !== "" && value === meetup0 ? undefined : value),
+  1
+);
+console.log(meetup0Json);
