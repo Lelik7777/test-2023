@@ -1,3 +1,4 @@
+
 //1.Создайте функцию truncate(str, maxlength), которая проверяет длину строки str и, если она превосходит maxlength, заменяет конец str на "…", так, чтобы её длина стала равна maxlength.
 function truncate(str, maxLength) {
   return str.length > maxLength ? str.slice(0, maxLength - 1) + "..." : str;
@@ -674,7 +675,7 @@ const user000 = {
   },
 };
 //alert(user000);
-const id=Symbol('id');
+const id = Symbol("id");
 let student = {
   name: "John",
   age: 30,
@@ -685,8 +686,8 @@ let student = {
   sum(a, b) {
     return a + b;
   },
-  value:undefined,
-  [id]:'some value'
+  value: undefined,
+  [id]: "some value",
 };
 const stringStudent = JSON.stringify(student);
 console.log(stringStudent);
@@ -698,18 +699,89 @@ function sum(a, b) {
 console.log(JSON.stringify(sum));
 console.log(JSON.stringify(43345345));
 console.log(JSON.stringify(null));
-const value=null;
+const value = null;
 console.log(JSON.stringify(value));
-console.log(JSON.stringify([4,5,6,7]));
+console.log(JSON.stringify([4, 5, 6, 7]));
 //мы можем настраивать свойства,которые хотим сериализировать
 let room = {
-  number: 23
+  number: 23,
+  windows: {
+    one: 1,
+    two: 2,
+  },
+  //благодаря этому методу мы можем настроить ссылочный объект так, чтобы в JSON попадали только нужные нам данные. В данном случае, попадет только свойство windows,а number нет.
+  toJSON() {
+    return this.windows;
+  },
 };
-
 let meetup = {
   title: "Conference",
-  participants: [{name: "John"}, {name: "Alice"}],
-  place: room // meetup ссылается на room
+  participants: [{ name: "John" }, { name: "Alice" }],
+  date: new Date(Date.UTC(2017, 0, 1)),
+  place: room, // meetup ссылается на room
 };
-console.log(JSON.stringify(meetup,['title','participants','place','number']));
+//массив в качестве replacer для нужных свойств
+//console.log(JSON.stringify(meetup,['title','participants','place','number']));
+//циклическая ссылка,которая ломает процесс форматирования
+room.occupiedBy = meetup; // room ссылается на meetup
+// функция в качестве replacer,в которой указываю свойства,которые не нужны в JSON
+console.log(
+  JSON.stringify(
+    meetup,
+    function (key, value) {
+      return key == "occupiedBy" || key === "title" ? undefined : value;
+    },
+    1
+  )
+); //{"participants":[{"name":"John"},{"name":"Alice"}],"place":{"number":23}}
 
+// так выглядит JSON формат после применения JSON.stringify()
+let str = '{"title":"Conference","date":"2017-11-30T12:00:00.000Z"}';
+const meetupToString = JSON.stringify(meetup, null, 1);
+console.log("JSON", meetupToString);
+const res2 = JSON.parse(meetupToString, function (key, value) {
+  return key === "date" ? new Date(value) : value;
+});
+console.log(res2.date.getMonth());
+let res = JSON.parse(str, (key, value) =>
+  key === "date" ? new Date(value) : value
+);
+//! months start with 0
+console.log(res.date.getDay() + 1);
+
+//Преобразуйте user в JSON, затем прочитайте этот JSON в другую переменную.
+let user7 = {
+  name: "Василий Иванович",
+  age: 35,
+};
+const user7Json = JSON.stringify(user7);
+console.log(user7Json);
+const parsedUser7 = JSON.parse(user7Json);
+//по сути мы скопировали объект
+console.log(parsedUser7 === user7Json);
+
+// В простых случаях циклических ссылок мы можем исключить свойство, из-за которого они возникают, из сериализации по его имени.
+// Но иногда мы не можем использовать имя, так как могут быть и другие, нужные, свойства с этим именем во вложенных объектах. Поэтому можно проверять свойство по значению.
+// Напишите функцию replacer для JSON-преобразования, которая удалит свойства, ссылающиеся на meetup:
+let room0 = {
+  number: 23,
+};
+
+let meetup0 = {
+  title: "Совещание",
+  occupiedBy: [{ name: "Иванов" }, { name: "Петров" }],
+  place: room0,
+};
+
+// цикличные ссылки
+room0.occupiedBy = meetup0;
+meetup0.self = meetup0;
+
+console.log(room0);
+console.log(meetup0);
+const meetup0Json = JSON.stringify(
+  meetup0,
+  (key, value) => (key !== "" && value === meetup0 ? undefined : value),
+  1
+);
+console.log(meetup0Json);
